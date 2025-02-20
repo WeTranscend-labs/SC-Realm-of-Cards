@@ -1,24 +1,17 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "./DeckType.sol";
+import "./DeckEvent.sol";
 
-contract DeckGame {
+contract DeckGame is Ownable {
     using DeckType for DeckType.Card;
     
     mapping(uint256 => DeckType.Card) private cards;
     uint256 private nextCardId;
-    address public owner;
-    
-    event CardAdded(uint256 indexed cardId, string name, uint256 attack, uint256 health);
-    
-    modifier onlyOwner() {
-        require(msg.sender == owner, "Only owner can perform this action");
-        _;
-    }
-    
-    constructor() {
-        owner = msg.sender;
+
+    constructor(address initialOwner) Ownable(initialOwner) {
         nextCardId = 1;
     }
     
@@ -48,8 +41,8 @@ contract DeckGame {
         newCard.onDefenseEffect = _onDefenseEffect;
         newCard.activeSkill = _activeSkill;
         newCard.classes = _classes;
-        
-        emit CardAdded(nextCardId, _name, _attack, _health);
+
+        emit DeckEvent.CardAdded(nextCardId, _name, _attack, _health);
         nextCardId++;
     }
     
