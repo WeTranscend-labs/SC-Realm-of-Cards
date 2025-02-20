@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-library MonsterLibrary {
+library DeckType {
 
     enum Class { METAL, WOOD, WATER, FIRE, EARTH }
 
@@ -20,6 +20,7 @@ library MonsterLibrary {
         uint256 health;
         uint256 maxPerSession;
         uint256 staminaCost;
+        string image;
         OnAttackEffect onAttackEffect;
         OnDeadEffect onDeadEffect;
         OnDefenseEffect onDefenseEffect;
@@ -31,6 +32,7 @@ library MonsterLibrary {
         uint256 id;
         uint256 health;
         uint256 attack;
+        string image;
         Class[] classes; 
     }
 }
