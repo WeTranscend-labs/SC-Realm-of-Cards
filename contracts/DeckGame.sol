@@ -8,14 +8,22 @@ import "./DeckResponse.sol";
 
 contract DeckGame is Ownable {
     using DeckType for DeckType.Card;
-    
-    mapping(uint256 => DeckType.Card) private cards;
-    uint256 private nextCardId;
+    using DeckType for DeckType.Monster;
 
-    constructor(address initialOwner) Ownable(initialOwner) {
+    mapping(uint256 => DeckType.Card) private cards;
+    mapping(uint256 => DeckType.Monster) private monsters;
+
+    uint256 private nextCardId;
+    uint256 private nextMonsterId;
+
+    constructor() Ownable(msg.sender) {
         nextCardId = 1;
+        nextMonsterId = 1;
     }
-    
+
+    /** 
+     * @notice Thêm một lá bài mới vào game.
+     */
     function addCard(
         string memory _name,
         uint256 _attack,
@@ -46,7 +54,7 @@ contract DeckGame is Ownable {
         emit DeckEvent.CardAdded(nextCardId, _name, _attack, _health);
         nextCardId++;
     }
-    
+
     function getCard(uint256 _cardId) external view returns (DeckType.Card memory) {
         return cards[_cardId];
     }
@@ -59,7 +67,7 @@ contract DeckGame is Ownable {
         require(pageSize > 0, "Page size must be greater than 0");
 
         uint256 totalElements = nextCardId - 1;
-        uint256 totalPages = (totalElements + pageSize - 1) / pageSize; // Làm tròn lên
+        uint256 totalPages = (totalElements + pageSize - 1) / pageSize;
 
         require(pageIndex < totalPages, "Invalid page index");
 
@@ -77,5 +85,32 @@ contract DeckGame is Ownable {
         }
 
         return DeckResponse.PaginatedCards(cardsPage, totalPages, totalElements);
+    }
+
+    /** 
+     * @notice Tạo một quái vật mới.
+     */
+    function createMonster(
+        uint256 _health,
+        uint256 _attack,
+        string memory _image,
+        DeckType.Class[] memory _classes
+    ) external onlyOwner {
+        DeckType.Monster storage newMonster = monsters[nextMonsterId];
+        newMonster.id = nextMonsterId;
+        newMonster.health = _health;
+        newMonster.attack = _attack;
+        newMonster.image = _image;
+        newMonster.classes = _classes;
+
+        emit DeckEvent.MonsterAdded(nextMonsterId, _health, _attack);
+        nextMonsterId++;
+    }
+
+    /**
+     * @notice Lấy thông tin quái vật theo ID.
+     */
+    function getMonsterById(uint256 _monsterId) external view returns (DeckType.Monster memory) {
+        return monsters[_monsterId];
     }
 }
