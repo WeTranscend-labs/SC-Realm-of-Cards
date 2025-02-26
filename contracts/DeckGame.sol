@@ -20,6 +20,7 @@ contract DeckGame is Ownable {
         nextCardId = 1;
         nextMonsterId = 1;
         initializeCards();
+        initializeMonsters();
     }
 
     /** 
