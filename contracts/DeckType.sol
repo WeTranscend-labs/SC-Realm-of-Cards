@@ -1,38 +1,33 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-library DeckType {
+import "./DeckType.sol";
 
-    enum Class { METAL, WOOD, WATER, FIRE, EARTH }
-
-    enum OnAttackEffect { NONE, LIFESTEAL, CRITICAL_STRIKE }
-
-    enum OnDeadEffect { NONE, EXPLODE, THORNS, SACRIFICE }
-
-    enum OnDefenseEffect { NONE, THORNS }
-
-    enum ActiveSkill { NONE, SACRIFICE }
-
-    struct Card {
-        uint256 id;
-        string name;
-        uint256 attack;
-        uint256 health;
-        uint256 maxPerSession;
-        uint256 staminaCost;
-        string image;
-        OnAttackEffect onAttackEffect;
-        OnDeadEffect onDeadEffect;
-        OnDefenseEffect onDefenseEffect;
-        ActiveSkill activeSkill;
-        Class[] classes; 
+library DeckResponse {
+    struct CardWithId {
+        uint256 id;        
+        DeckType.Card card;      
     }
 
-    struct Monster {
-        uint256 id;
-        uint256 health;
-        uint256 attack;
-        string image;
-        Class[] classes; 
+    struct MonsterWithId {
+        uint256 id;           
+        DeckType.Monster monster; 
+    }
+
+    struct PrebuiltDeckWithId {
+        uint256 id;                  
+        DeckType.PrebuiltDeck deck; 
+    }
+
+    struct PaginatedCardsWithId {
+        CardWithId[] cardsPage;    
+        uint256 totalPages;        
+        uint256 totalElements;     
+    }
+
+    struct PaginatedMonstersWithId {
+        MonsterWithId[] monstersPage; 
+        uint256 totalPages;        
+        uint256 totalElements;      
     }
 }
