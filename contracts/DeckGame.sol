@@ -14,7 +14,7 @@ using DeckType for DeckType.Card;
 
     mapping(uint256 => DeckType.Card) private cards;
     mapping(uint256 => DeckType.Monster) private monsters;
-    mapping(uint256 => DeckType.PrebuiltDeck) public prebuiltDecks; 
+    mapping(uint256 => DeckType.PrebuiltDeck) private prebuiltDecks; 
     uint256 private nextCardId;
     uint256 private nextMonsterId;
     uint256 private nextPrebuiltDeckId; 
@@ -25,7 +25,6 @@ using DeckType for DeckType.Card;
         nextPrebuiltDeckId = 1;  
         initializeCards();
         initializeMonsters();
-        initializePrebuiltDecks();
     }
 
     /** 
@@ -442,7 +441,7 @@ using DeckType for DeckType.Card;
         return deckList;
     }
 
-    function initializePrebuiltDecks() private {
+    function initializePrebuiltDecks() public onlyOwner {
         // Deck 1: Inferno Dominance
         string[] memory strengths1 = new string[](3);
         strengths1[0] = "High burst damage";
