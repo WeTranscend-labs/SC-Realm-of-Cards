@@ -7,21 +7,26 @@ import "./DeckEvent.sol";
 import "./DeckResponse.sol";
 
 contract DeckGame is Ownable {
-    using DeckType for DeckType.Card;
+using DeckType for DeckType.Card;
+using DeckType for DeckType.Card;
     using DeckType for DeckType.Monster;
+    using DeckType for DeckType.PrebuiltDeck;
 
     mapping(uint256 => DeckType.Card) private cards;
     mapping(uint256 => DeckType.Monster) private monsters;
-
+    mapping(uint256 => DeckType.PrebuiltDeck) private prebuiltDecks; 
     uint256 private nextCardId;
     uint256 private nextMonsterId;
+    uint256 private nextPrebuiltDeckId; 
 
     constructor() Ownable(msg.sender) {
         nextCardId = 1;
         nextMonsterId = 1;
+        nextPrebuiltDeckId = 1;  
         initializeCards();
         initializeMonsters();
     }
+
 
     /** 
      * @notice Thêm một lá bài mới vào game.
@@ -388,4 +393,225 @@ contract DeckGame is Ownable {
         addCard("King of Abyss", 8, 10, 1, 4, "https://res.cloudinary.com/dlotuochc/image/upload/v1739797997/TCG%20Battle%20Adventure/wsx7msv8qgeefylwbwv9.png",
             DeckType.OnAttackEffect.CRITICAL_STRIKE, DeckType.OnDeadEffect.NONE, DeckType.OnDefenseEffect.THORNS, DeckType.ActiveSkill.NONE, _toClassArray2(DeckType.Class.EARTH, DeckType.Class.METAL));
     }
+
+    function addPrebuiltDeck(
+        string memory _name,
+        string memory _description,
+        string memory _difficulty,
+        string memory _playstyle,
+        string[] memory _strengths,
+        string[] memory _weaknesses,
+        uint256[] memory _cardIds,
+        string memory _coverImage,
+        string memory _strategy
+    ) public onlyOwner {
+        DeckType.PrebuiltDeck storage deck = prebuiltDecks[nextPrebuiltDeckId];
+        deck.name = _name;
+        deck.description = _description;
+        deck.difficulty = _difficulty;
+        deck.playstyle = _playstyle;
+        deck.strengths = _strengths;
+        deck.weaknesses = _weaknesses;
+        deck.coverImage = _coverImage;
+        deck.strategy = _strategy;
+
+        // Sao chép cards trực tiếp từ storage sang storage
+        DeckType.Card[] storage deckCards = prebuiltDecks[nextPrebuiltDeckId].cards;
+        for (uint256 i = 0; i < _cardIds.length; i++) {
+            require(cards[_cardIds[i]].id != 0, "Card does not exist");
+            deckCards.push(cards[_cardIds[i]]);  // Sao chép từ storage
+        }
+
+        nextPrebuiltDeckId++;
+    }
+
+    /**
+    * @notice Lấy danh sách tất cả các prebuilt deck hiện có trong game.
+    * @return DeckResponse.PrebuiltDeckWithId[] Danh sách các prebuilt deck kèm ID.
+    */
+    function getAllPrebuiltDecks() public view returns (DeckResponse.PrebuiltDeckWithId[] memory) {
+        DeckResponse.PrebuiltDeckWithId[] memory deckList = new DeckResponse.PrebuiltDeckWithId[](nextPrebuiltDeckId - 1);
+        
+        for (uint256 i = 1; i < nextPrebuiltDeckId; i++) {
+            deckList[i - 1] = DeckResponse.PrebuiltDeckWithId({
+                id: i,
+                deck: prebuiltDecks[i]
+            });
+        }
+        
+        return deckList;
+    }
+
+    function initializePrebuiltDecks() private {
+        // Deck 1: Inferno Dominance
+        string[] memory strengths1 = new string[](3);
+        strengths1[0] = "High burst damage";
+        strengths1[1] = "Critical strikes";
+        strengths1[2] = "Explosive effects";
+        string[] memory weaknesses1 = new string[](2);
+        weaknesses1[0] = "Low survivability";
+        weaknesses1[1] = "Vulnerable to control";
+        uint256[] memory cardIds1 = new uint256[](13);
+        cardIds1[0] = 1;   // Fire Dragon x2
+        cardIds1[1] = 1;
+        cardIds1[2] = 6;   // Flame Assassin x2
+        cardIds1[3] = 6;
+        cardIds1[4] = 16;  // Phoenix Warrior x2
+        cardIds1[5] = 16;
+        cardIds1[6] = 11;  // Volcanic Giant
+        cardIds1[7] = 3;   // Water Elemental x2
+        cardIds1[8] = 3;
+        cardIds1[9] = 8;   // Water Healer x2
+        cardIds1[10] = 8;
+        cardIds1[11] = 12; // Storm Mage x2
+        cardIds1[12] = 12;
+        addPrebuiltDeck(
+            "Inferno Dominance",
+            "Overwhelm your enemies with aggressive fire attacks and explosive combinations",
+            "Medium",
+            "Aggressive",
+            strengths1,
+            weaknesses1,
+            cardIds1,
+            "https://images.unsplash.com/photo-1544553866-7f0d760b6f46?q=80&w=2070",
+            "Focus on dealing maximum damage early. Use Water Elementals for sustain and Storm Mages for consistent damage."
+        );
+
+        // Deck 2: Mountain's Bulwark
+        string[] memory strengths2 = new string[](3);
+        strengths2[0] = "High health pool";
+        strengths2[1] = "Thorns damage";
+        strengths2[2] = "Good sustain";
+        string[] memory weaknesses2 = new string[](2);
+        weaknesses2[0] = "Low mobility";
+        weaknesses2[1] = "Weak to burst damage";
+        uint256[] memory cardIds2 = new uint256[](13);
+        cardIds2[0] = 2;   // Earth Golem x3
+        cardIds2[1] = 2;
+        cardIds2[2] = 2;
+        cardIds2[3] = 7;   // Stone Guardian x2
+        cardIds2[4] = 7;
+        cardIds2[5] = 17;  // Crystal Golem x2
+        cardIds2[6] = 17;
+        cardIds2[7] = 13;  // Nature's Warden x2
+        cardIds2[8] = 13;
+        cardIds2[9] = 15;  // Ancient Treant
+        cardIds2[10] = 10; // Forest Druid x2
+        cardIds2[11] = 10;
+        cardIds2[12] = 20; // Forest Scout
+        addPrebuiltDeck(
+            "Mountain's Bulwark",
+            "An impenetrable fortress of earth and stone",
+            "Easy",
+            "Defensive",
+            strengths2,
+            weaknesses2,
+            cardIds2,
+            "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=2070",
+            "Build a wall of high-health units. Use thorns effects to punish attackers while slowly grinding them down."
+        );
+
+        // Deck 3: Steel Legion
+        string[] memory strengths3 = new string[](3);
+        strengths3[0] = "Balanced stats";
+        strengths3[1] = "Critical strikes";
+        strengths3[2] = "Armor effects";
+        string[] memory weaknesses3 = new string[](2);
+        weaknesses3[0] = "Resource intensive";
+        weaknesses3[1] = "Complex combinations";
+        uint256[] memory cardIds3 = new uint256[](13);
+        cardIds3[0] = 4;   // Metal Knight x2
+        cardIds3[1] = 4;
+        cardIds3[2] = 9;   // Metal Berserker x2
+        cardIds3[3] = 9;
+        cardIds3[4] = 14;  // Blade Master x2
+        cardIds3[5] = 14;
+        cardIds3[6] = 19;  // Steel Sentinel x2
+        cardIds3[7] = 19;
+        cardIds3[8] = 12;  // Storm Mage x2
+        cardIds3[9] = 12;
+        cardIds3[10] = 17; // Crystal Golem x2
+        cardIds3[11] = 17;
+        cardIds3[12] = 11; // Volcanic Giant
+        addPrebuiltDeck(
+            "Steel Legion",
+            "Precise strikes and calculated moves",
+            "Hard",
+            "Control",
+            strengths3,
+            weaknesses3,
+            cardIds3,
+            "https://images.unsplash.com/photo-1563089145-599997674d42?q=80&w=2070",
+            "Control the battlefield with armored units while setting up powerful critical strike combinations."
+        );
+
+        // Deck 4: Wild Synthesis
+        string[] memory strengths4 = new string[](3);
+        strengths4[0] = "Synergy bonuses";
+        strengths4[1] = "Resource efficient";
+        strengths4[2] = "Flexible gameplay";
+        string[] memory weaknesses4 = new string[](2);
+        weaknesses4[0] = "Requires setup";
+        weaknesses4[1] = "Weak individually";
+        uint256[] memory cardIds4 = new uint256[](13);
+        cardIds4[0] = 5;   // Wood Elf x3
+        cardIds4[1] = 5;
+        cardIds4[2] = 5;
+        cardIds4[3] = 10;  // Forest Druid x2
+        cardIds4[4] = 10;
+        cardIds4[5] = 15;  // Ancient Treant
+        cardIds4[6] = 13;  // Nature's Warden x2
+        cardIds4[7] = 13;
+        cardIds4[8] = 3;   // Water Elemental x2
+        cardIds4[9] = 3;
+        cardIds4[10] = 8;  // Water Healer x2
+        cardIds4[11] = 8;
+        cardIds4[12] = 7;  // Stone Guardian (dựa trên index trong cardPool)
+        addPrebuiltDeck(
+            "Wild Synthesis",
+            "Harness the power of nature's harmony",
+            "Medium",
+            "Combo",
+            strengths4,
+            weaknesses4,
+            cardIds4,
+            "https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=2070",
+            "Build powerful combinations between Wood and Water units. Focus on healing and sustain while growing stronger."
+        );
+
+        // Deck 5: Elemental Chaos
+        string[] memory strengths5 = new string[](3);
+        strengths5[0] = "Unpredictable";
+        strengths5[1] = "Powerful effects";
+        strengths5[2] = "Multiple strategies";
+        string[] memory weaknesses5 = new string[](2);
+        weaknesses5[0] = "Inconsistent";
+        weaknesses5[1] = "Hard to master";
+        uint256[] memory cardIds5 = new uint256[](13);
+        cardIds5[0] = 1;   // Fire Dragon
+        cardIds5[1] = 2;   // Earth Golem
+        cardIds5[2] = 3;   // Water Elemental
+        cardIds5[3] = 4;   // Metal Knight
+        cardIds5[4] = 5;   // Wood Elf
+        cardIds5[5] = 11;  // Volcanic Giant
+        cardIds5[6] = 12;  // Storm Mage
+        cardIds5[7] = 13;  // Nature's Warden
+        cardIds5[8] = 14;  // Blade Master
+        cardIds5[9] = 15;  // Ancient Treant
+        cardIds5[10] = 16; // Phoenix Warrior
+        cardIds5[11] = 17; // Crystal Golem
+        cardIds5[12] = 18; // Tide Caller
+        addPrebuiltDeck(
+            "Elemental Chaos",
+            "Master all elements in perfect discord",
+            "Expert",
+            "Versatile",
+            strengths5,
+            weaknesses5,
+            cardIds5,
+            "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=2070",
+            "Adapt to each situation by combining different elemental effects. Requires deep knowledge of all mechanics."
+        );
+    }
+
 }
