@@ -57,36 +57,57 @@ contract DeckGame is Ownable {
         nextCardId++;
     }
 
-    function getCard(uint256 _cardId) external view returns (DeckType.Card memory) {
-        return cards[_cardId];
+    /**
+    * @notice Lấy thông tin một lá bài theo ID.
+    * @param _cardId ID của lá bài cần lấy.
+    * @return DeckResponse.CardWithId Struct chứa ID và dữ liệu lá bài.
+    */
+    function getCardById(uint256 _cardId) external view returns (DeckResponse.CardWithId memory) {
+        require(_cardId > 0 && _cardId < nextCardId, "Invalid card ID");
+        return DeckResponse.CardWithId({
+            id: _cardId,
+            card: cards[_cardId]
+        });
     }
 
+    /**
+    * @notice Lấy danh sách phân trang các lá bài kèm ID.
+    * @param pageIndex Chỉ số trang (bắt đầu từ 0).
+    * @param pageSize Số lượng phần tử mỗi trang.
+    * @return DeckResponse.PaginatedCardsWithId Struct chứa danh sách card kèm ID, tổng số trang, và tổng số phần tử.
+    */
     function getCardsPaginated(uint256 pageIndex, uint256 pageSize)
         external
         view
-        returns (DeckResponse.PaginatedCards memory)
+        returns (DeckResponse.PaginatedCardsWithId memory)
     {
         require(pageSize > 0, "Page size must be greater than 0");
 
         uint256 totalElements = nextCardId - 1;
         uint256 totalPages = (totalElements + pageSize - 1) / pageSize;
 
-        require(pageIndex < totalPages, "Invalid page index");
+        require(totalElements > 0 && pageIndex < totalPages, "Invalid page index");
 
-        uint256 startIndex = pageIndex * pageSize + 1;
-        uint256 endIndex = startIndex + pageSize;
-        if (endIndex > nextCardId) {
-            endIndex = nextCardId;
-        }
+        uint256 startIndex = pageIndex * pageSize + 1; // +1 vì card ID bắt đầu từ 1
+        uint256 endIndex = startIndex + pageSize > nextCardId ? nextCardId : startIndex + pageSize;
 
         uint256 resultSize = endIndex - startIndex;
-        DeckType.Card[] memory cardsPage = new DeckType.Card[](resultSize);
+        DeckResponse.CardWithId[] memory cardsPage = new DeckResponse.CardWithId[](resultSize);
 
         for (uint256 i = 0; i < resultSize; i++) {
-            cardsPage[i] = cards[startIndex + i];
+            uint256 cardId = startIndex + i;
+            cardsPage[i] = DeckResponse.CardWithId({
+                id: cardId,
+                card: cards[cardId]
+            });
         }
 
-        return DeckResponse.PaginatedCards(cardsPage, totalPages, totalElements);
+        // Trả về struct phân trang
+        return DeckResponse.PaginatedCardsWithId({
+            cardsPage: cardsPage,
+            totalPages: totalPages,
+            totalElements: totalElements
+        });
     }
 
     /** 
@@ -111,11 +132,29 @@ contract DeckGame is Ownable {
         nextMonsterId++;
     }
 
+    function getMonsterById(uint256 _monsterId) external view returns (DeckResponse.MonsterWithId memory) {
+        require(_monsterId > 0 && _monsterId < nextMonsterId, "Invalid monster ID");
+        return DeckResponse.MonsterWithId({
+            id: _monsterId,
+            monster: monsters[_monsterId]
+        });
+    }
+
     /**
-     * @notice Lấy thông tin quái vật theo ID.
-     */
-    function getMonsterById(uint256 _monsterId) external view returns (DeckType.Monster memory) {
-        return monsters[_monsterId];
+    * @notice Lấy danh sách tất cả các monster hiện có trong game.
+    * @return DeckResponse.MonsterWithId[] Danh sách các monster kèm ID.
+    */
+    function getAllMonsters() public view returns (DeckResponse.MonsterWithId[] memory) {
+        DeckResponse.MonsterWithId[] memory monsterList = new DeckResponse.MonsterWithId[](nextMonsterId - 1);
+        
+        for (uint256 i = 1; i < nextMonsterId; i++) {
+            monsterList[i - 1] = DeckResponse.MonsterWithId({
+                id: i,
+                monster: monsters[i]
+            });
+        }
+        
+        return monsterList;
     }
 
     function _toClassArray(DeckType.Class _class) private pure returns (DeckType.Class[] memory) {
