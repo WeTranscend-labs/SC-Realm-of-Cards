@@ -3,7 +3,7 @@
 
   
 
-Welcome to the heart of **Realm of Cards - TCG Battle Adventure**! This repository houses the smart contracts that power the game’s blockchain integration, ensuring secure card ownership, tamper-proof game progress, and optimized gas efficiency on the **HappyChain Testnet**. Whether you're summoning legendary decks or battling ancient monsters, these contracts are the magical glue tying the realm together. Let’s explore the blockchain sorcery within! 
+Welcome to the heart of **Realm of Cards - TCG Battle Adventure**! This repository houses the smart contracts that power the game’s blockchain integration, ensuring secure card ownership, tamper-proof game progress, and optimized gas efficiency on the **HappyChain Testnet**. Whether you're summoning legendary decks or battling ancient monsters, these contracts are the magical glue tying the realm together. Let’s explore the blockchain sorcery within! ⚔️
 
 ----------
 
@@ -177,16 +177,11 @@ Together, these tools anchor the game’s decentralized features, from NFT card 
 
 ```
 .
-├── prisma/                   # Contains Prisma configuration for database management
-│   └── schema.prisma         # Defines the database schema (e.g., game states)
-├── src/                      # Main source code directory for the backend
-│   ├── app/                  # Holds API routes and server-side logic
-│   │   └── api/              # API endpoints handling client requests (e.g., game state, user actions)
-│   ├── common/               # Shared utilities, constants, or helper functions (note: possibly intended as "common")
-│   ├── exception/            # Custom error classes or handlers for API responses
-│   ├── module/               # Separate modules or services (e.g., game logic, blockchain integration)
-│   └── middleware.ts         # Middleware functions for request processing (e.g., authentication, logging)
-└── .env                      # Environment configuration file for sensitive data (e.g., database URL, API keys)
+└── contracts/                # Contains the Solidity smart contracts that form the core of the project
+    ├── DeckEvent.sol         # Manages events related to deck activities, such as creation, modification, or usage in games
+    ├── DeckGame.sol          # Handles the game logic involving decks, including rules, interactions, and game state management
+    ├── DeckResponse.sol      # Deals with responses or outcomes from deck-related actions, such as success or failure states
+    └── DeckType.sol          # Defines different types or categories of decks, along with their associated properties or behaviors
 ```
 ----------
 
