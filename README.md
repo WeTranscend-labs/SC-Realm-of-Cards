@@ -3,7 +3,7 @@
 
   
 
-Welcome to the heart of **Realm of Cards - TCG Battle Adventure**! This repository houses the smart contracts that power the game’s blockchain integration, ensuring secure card ownership, tamper-proof game progress, and optimized gas efficiency on the **HappyChain Testnet**. Whether you're summoning legendary decks or battling ancient monsters, these contracts are the magical glue tying the realm together. Let’s explore the blockchain sorcery within! ⚔️
+Welcome to the heart of **Realm of Cards - TCG Battle Adventure**! This repository houses the smart contracts that power the game’s blockchain integration, ensuring secure card ownership, tamper-proof game progress, and optimized gas efficiency on the **HappyChain Testnet**. Whether you're summoning legendary decks or battling ancient monsters, these contracts are the magical glue tying the realm together. Let’s explore the blockchain sorcery within! 
 
 ----------
 
