@@ -11,7 +11,6 @@ Welcome to the heart of **Realm of Cards - TCG Battle Adventure**! This reposito
 
 - [What is Realm of Cards - Smart Contracts?](#what-is-realm-of-cards---smart-contracts)
 - [How to Get Started](#how-to-get-started)
-  - [Prerequisites](#prerequisites)
   - [Installation](#installation)
 - [Technologies Powering the Contracts](#technologies-powering-the-contracts)
 - [Project Structure](#project-structure)
@@ -38,13 +37,6 @@ Built for seamless integration with the game’s backend and frontend, these con
 ## How to Get Started
 
 Ready to deploy these contracts and unleash the blockchain magic? Follow these steps to set up and interact with the smart contracts locally or on **HappyChain Testnet**!
-
-### Prerequisites
-Before you begin, make sure you have:
-
-- **Node.js**: Version 16 or higher—your engine for this epic backend.  
-- **npm**: Your trusty tool to summon dependencies.  
-- **Prisma**: Database sorcery (install globally if needed: `npm install -g prisma`).
 
 ### Installation
 
